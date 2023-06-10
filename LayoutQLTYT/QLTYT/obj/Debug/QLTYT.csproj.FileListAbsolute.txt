@@ -1,0 +1,2 @@
+D:\LayoutQLTYT\QLTYT\obj\Debug\QLTYT.csproj.AssemblyReference.cache
+D:\LayoutQLTYT\QLTYT\obj\Debug\QLTYT.csproj.CoreCompileInputs.cache

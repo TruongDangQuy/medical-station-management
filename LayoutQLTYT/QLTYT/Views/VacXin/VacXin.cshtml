@@ -1,0 +1,262 @@
+﻿@model QLTYT.ViewModel.MultipleData
+@{
+    ViewBag.Title = "VacXin";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List</title>
+    <link rel="stylesheet" href="~/css/asset/style.css">
+    <link rel="stylesheet" href="~/css/themify-icons/themify-icons.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+</head>
+<body>
+    <header class="header">
+
+        <div id="menu-btn" class="fas fa-bars"></div>
+
+        <a href="#" class="logo"><h3> <span>Quản lý</span> Vắc Xin </h3> </a>
+
+
+
+
+    </header>
+
+
+
+    <div class="container">
+        <div class="list-table ">
+
+            <div class="btn-control ">
+                <a href="ThemVacXin"><button type="button" class="btn-new js-Open-add"> <i class="ti-pencil-alt2"></i>Thêm mới</button></a>
+                <div class="seach">
+                    <form>
+                        <input type="text" id="Search" placeholder="Search..." class="input"><a href=""><i class="icon ti-search"></i></a>
+                    </form>
+                </div>
+            </div>
+            <div class="content">
+                <h2>Thông tin vắc xin</h2>
+                <a href=""><i class=""></i></a>
+
+            </div>
+
+            <form action="" method="post">
+                <table class="table-form">
+                    <thead class="table-header">
+                        <tr>
+                            <th>Mã vắc xin</th>
+                            <th>Tên bệnh</th>
+                            <th>Tên vắc xin</th>
+                            <th>Liều lượng</th>
+                            <th>Đơn vị</th>
+                            <th>Đơn giá</th>
+                            <th>Số lô</th>
+                            <th colspan="2"> </th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="table-body ">
+                        @foreach (var item in Model.vacXins)
+                        {
+                            <tr class="Search" id="row_@item.IdVacXin">
+                                <td typeof="hidden">@item.IdVacXin</td>
+                                <td>@item.Benh.TenBenh</td>
+                                <td>@item.TenVacXin</td>
+                                <td>@item.LieuLuong</td>
+                                <td>@item.DonVi</td>
+                                <td>@item.DonGia</td>
+                                <td>@item.SoLo</td>
+                                <td class=" btn-edit js-edit">
+                                    <i class="ti-pencil ">@Html.ActionLink("Sửa đổi", "SuaDoiVacXin", new { id = @item.IdVacXin })</i>
+                                </td>                               
+                                <td class="btn-delete js-delete">
+                                    <a class="delete-link" data-id="@item.IdVacXin" data-name="@item.TenVacXin">
+                                        <i class="ti-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </form>
+        </div>
+
+        <a href="#"><button class="favorite styled" type="button">Quay lại</button></a>
+
+    </div>
+    <style>
+        .confirmation-box {
+            position: fixed;
+            z-index: 9999;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+            .confirmation-box h3 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+
+            .confirmation-box p {
+                font-size: 16px;
+                margin-bottom: 20px;
+            }
+
+            .confirmation-box .button-group {
+                display: flex;
+                justify-content: center;
+            }
+
+                .confirmation-box .button-group button {
+                    margin: 0 10px;
+                    padding: 10px 20px;
+                    font-size: 16px;
+                }
+
+                    .confirmation-box .button-group button.yes {
+                        background-color: #e74c3c;
+                        color: #fff;
+                        border: none;
+                    }
+
+                    .confirmation-box .button-group button.no {
+                        background-color: #ccc;
+                        color: #333;
+                        border: none;
+                    }
+    </style>
+
+    <div id="loader" style="display:none;">
+        <img src="~/image/loader.gif" alt="Loading..." />
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            function Contains(text_one, text_two) {
+                if (text_one.indexOf(text_two) != -1)
+                    return true;
+            }
+            $("#Search").keyup(function () {
+                var searchText = $("#Search").val().toLowerCase();
+                $(".Search").each(function () {
+                    if (!Contains($(this).text().toLowerCase(), searchText)) {
+                        $(this).hide();
+                    }
+                    else {
+                        $(this).show();
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('.delete-link').click(function (e) {
+                e.preventDefault();
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+                var confirmationBoxHtml = '<div class="confirmation-box">' +
+                    '<h3>Xóa bệnh</h3>' +
+                    '<p>Bạn có chắc chắn muốn xóa vắc xin <strong>' + name + '</strong>?</p>' +
+                    '<div class="button-group">' +
+                    '<button class="yes" data-id="' + id + '">Có</button>' +
+                    '<button class="no">Không</button>' +
+                    '</div>' +
+                    '</div>';
+                $('body').append(confirmationBoxHtml);
+                $('.yes').click(function () {
+                    var id = $(this).data('id');
+                    deleteVacXin(id);
+                    $('.confirmation-box').remove();
+                    $('#loader').show();
+                });
+                $('.no').click(function () {
+                    $('.confirmation-box').remove();
+                });
+            });
+        });
+
+        function deleteVacXin(id) {
+
+            // Hiển thị loader
+            $('#loader').show();
+
+            // Xóa bệnh
+            $.ajax({
+                url: '/VacXin/XoaVacXin/' + id,
+                type: 'POST',
+                success: function (result) {
+                    // Ẩn loader
+                    $('#loader').hide();
+                    // Xóa dòng thông tin bệnh trong bảng
+                    $('#row_' + id).remove();
+                },
+                error: function () {
+                    // Ẩn loader
+                    $('#loader').hide();
+                    alert('Đã xảy ra lỗi khi xóa bệnh!');
+                }
+            });
+
+        }
+    </script>
+
+    <script>
+        function SuaDoiVacXin(id) {
+            // Gửi yêu cầu AJAX đến server để lấy thông tin vắc xin
+            $.ajax({
+                url: '/VacXin/SuaDoiVacXin',
+                type: 'GET',
+                data: { 'id': id },
+                success: function (vacxin) {
+                    // Điền giá trị vào form edit
+                    $('#IdVacXin').val(vacxin.IdVacXin);
+                    $('#TenVacXin').val(vacxin.TenVacXin);
+                    $('#LieuLuong').val(vacxin.LieuLuong);
+                    $('#DonVi').val(vacxin.DonVi);
+                    $('#DonGia').val(vacxin.DonGia);
+                    $('#SoLo').val(vacxin.SoLo);
+
+                    // Hiển thị form edit
+                    $('#SuaDoiVacXin').show();
+                },
+                error: function () {
+                    alert('Có lỗi xảy ra khi lấy thông tin vắc xin');
+                }
+            });
+        }
+
+    </script>
+
+    <div class="delete container ">
+        <div class="row ">
+
+            <h1> Bạn Muốn Xóa </h1>
+            <div class="btn-accept">
+                <button class=" btn btn-yes">Yes </button>
+                <button class=" btn btn-no js-close-delete">No</button>
+            </div>
+
+        </div>
+    </div>
+
+
+
+</body>
+
+</html>
+

@@ -1,0 +1,231 @@
+﻿@model QLTYT.ViewModel.MutipleData2
+@{
+    ViewBag.Title = "PhieuTiemChung";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phiếu tiêm chủng</title>
+    <link rel="stylesheet" href="~/css/asset/style.css">
+    <link rel="stylesheet" href="~/css/themify-icons/themify-icons.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+</head>
+<body>
+    <header class="header">
+
+        <div id="menu-btn" class="fas fa-bars"></div>
+
+        <a href="#" class="logo"><h3> <span>Quản lý</span> phiếu tiêm chủng </h3> </a>
+
+
+
+
+    </header>
+
+
+
+    <div class="container">
+        <div class="list-table ">
+
+            <div class="btn-control ">
+                <a href="TaoPhieuTiemChung"><button type="button" class="btn-new js-Open-add"> <i class="ti-pencil-alt2"></i>Thêm mới</button></a>
+                <div class="seach">
+                    <form>
+                        <input type="text" id="Search" placeholder="Search..." class="input"><a href=""><i class="icon ti-search"></i></a>
+                    </form>
+                </div>
+            </div>
+            <div class="content">
+                <h2>Thông tin các phiếu tiêm chủng</h2>
+                <a href=""><i class=""></i></a>
+
+            </div>
+
+            <form action="" method="post">
+                <table class="table-form">
+                    <thead class="table-header">
+                        <tr>
+                            <th>Mã số phiếu</th>
+                            <th>Tên nhân viên</th>
+                            <th>Tên phòng</th>
+                            <th>Loại phòng</th>
+                            <th>Tên bệnh nhân</th>
+                            <th>Nhóm bệnh nhân</th>
+                            <th>Ngày tạo</th>
+                            <th colspan="3"> </th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="table-body ">
+                        @foreach (var item in Model.phieuTiemChungs)
+                        {
+                            <tr class="Search" id="row_@item.IdSoPhieu">
+                                <td typeof="hidden">@item.IdSoPhieu</td>
+                                <td>@item.NhanVien.HoTen</td>
+                                <td>@item.Phong.TenPhong</td>
+                                <td>@item.Phong.LoaiPhong.TenLoaiPhong</td>
+                                <td>@item.BenhNhan.HoTen</td>
+                                <td>@item.BenhNhan.NhomBenhNhan.TenNhom</td>
+                                <td>@item.NgayTao</td>
+                                <td class=" btn-edit js-edit">
+                                    <i class="ti-search ">@Html.ActionLink("Chi tiết", "SuaDoiPhieuTiemChung", new { id = @item.IdSoPhieu })</i>
+                                </td>
+                                <td class=" btn-edit js-edit">
+                                    <i class="ti-pencil ">@Html.ActionLink("Sửa đổi", "SuaDoiPhieuTiemChung", new { id = @item.IdSoPhieu })</i>
+                                </td>
+                                <td class="btn-delete js-delete">
+                                    <a class="delete-link" data-id="@item.IdSoPhieu" data-name="@item.BenhNhan.HoTen">
+                                        <i class="ti-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </form>
+        </div>
+
+        <a href="#"><button class="favorite styled" type="button">Quay lại</button></a>
+
+    </div>
+
+
+
+    <style>
+        .confirmation-box {
+            position: fixed;
+            z-index: 9999;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+            .confirmation-box h3 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+
+            .confirmation-box p {
+                font-size: 16px;
+                margin-bottom: 20px;
+            }
+
+            .confirmation-box .button-group {
+                display: flex;
+                justify-content: center;
+            }
+
+                .confirmation-box .button-group button {
+                    margin: 0 10px;
+                    padding: 10px 20px;
+                    font-size: 16px;
+                }
+
+                    .confirmation-box .button-group button.yes {
+                        background-color: #e74c3c;
+                        color: #fff;
+                        border: none;
+                    }
+
+                    .confirmation-box .button-group button.no {
+                        background-color: #ccc;
+                        color: #333;
+                        border: none;
+                    }
+    </style>
+
+    <div id="loader" style="display:none;">
+        <img src="~/image/loader.gif" alt="Loading..." />
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            function Contains(text_one, text_two) {
+                if (text_one.indexOf(text_two) != -1)
+                    return true;
+            }
+            $("#Search").keyup(function () {
+                var searchText = $("#Search").val().toLowerCase();
+                $(".Search").each(function () {
+                    if (!Contains($(this).text().toLowerCase(), searchText)) {
+                        $(this).hide();
+                    }
+                    else {
+                        $(this).show();
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('.delete-link').click(function (e) {
+                e.preventDefault();
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+                var confirmationBoxHtml = '<div class="confirmation-box">' +
+                    '<h3>Xóa bệnh</h3>' +
+                    '<p>Bạn có chắc chắn muốn xóa phiếu tiêm chủng của <strong>' + name + '</strong>?</p>' +
+                    '<div class="button-group">' +
+                    '<button class="yes" data-id="' + id + '">Có</button>' +
+                    '<button class="no">Không</button>' +
+                    '</div>' +
+                    '</div>';
+                $('body').append(confirmationBoxHtml);
+                $('.yes').click(function () {
+                    var id = $(this).data('id');
+                    deletePhieuTiemChung(id);
+                    $('.confirmation-box').remove();
+                    $('#loader').show();
+                });
+                $('.no').click(function () {
+                    $('.confirmation-box').remove();
+                });
+            });
+        });
+
+        function deletePhieuTiemChung(id) {
+
+            // Hiển thị loader
+            $('#loader').show();
+
+            // Xóa bệnh
+            $.ajax({
+                url: '/TaoPhieuTiemChung/XoaPhieuTiemChung/' + id,
+                type: 'POST',
+                success: function (result) {
+                    // Ẩn loader
+                    $('#loader').hide();
+                    // Xóa dòng thông tin bệnh trong bảng
+                    $('#row_' + id).remove();
+                },
+                error: function () {
+                    // Ẩn loader
+                    $('#loader').hide();
+                    alert('Đã xảy ra lỗi khi xóa bệnh!');
+                }
+            });
+
+        }
+    </script>
+
+
+
+
+
+</body>
+
+</html>
+
